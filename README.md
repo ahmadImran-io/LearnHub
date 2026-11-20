@@ -20,8 +20,8 @@ LearnHub is a MERN-stack Learning Management System (LMS). Learners can explore 
 | ----------------------------------------------------------- | -------------------------------------------------------------------- |
 | ![Course search and listing](screenshots/course-search.png) | ![Instructor course dashboard](screenshots/instructor-dashboard.png) |
 
-| Admin analytics                                               | Mobile experience |
-| ------------------------------------------------------------- | ----------------- |
+| Admin analytics                                               | 
+| ------------------------------------------------------------- | 
 | ![Admin analytics dashboard](screenshots/admin-dashboard.png) |
 
 ## Architecture

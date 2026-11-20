@@ -16,13 +16,13 @@ LearnHub is a MERN-stack Learning Management System (LMS). Learners can explore 
 
 ## Visual tour
 
-| Explore courses | Instructor workspace |
-|---|---|
+| Explore courses                                             | Instructor workspace                                                 |
+| ----------------------------------------------------------- | -------------------------------------------------------------------- |
 | ![Course search and listing](screenshots/course-search.png) | ![Instructor course dashboard](screenshots/instructor-dashboard.png) |
 
-| Admin analytics | Mobile experience |
-|---|---|
-| ![Admin analytics dashboard](screenshots/admin-dashboard.png) | ![LearnHub on mobile](screenshots/25-mobile-home.png) |
+| Admin analytics                                               | Mobile experience |
+| ------------------------------------------------------------- | ----------------- |
+| ![Admin analytics dashboard](screenshots/admin-dashboard.png) |
 
 ## Architecture
 
@@ -39,12 +39,12 @@ flowchart LR
 
 ## Technology
 
-| Layer | Technologies |
-|---|---|
-| Frontend | React, Vite, React Router, Axios, Tailwind CSS |
-| Backend | Node.js, Express |
-| Database | MongoDB, Mongoose |
-| Authentication | JSON Web Tokens, bcryptjs |
+| Layer          | Technologies                                   |
+| -------------- | ---------------------------------------------- |
+| Frontend       | React, Vite, React Router, Axios, Tailwind CSS |
+| Backend        | Node.js, Express                               |
+| Database       | MongoDB, Mongoose                              |
+| Authentication | JSON Web Tokens, bcryptjs                      |
 
 ## Run locally
 
@@ -97,15 +97,15 @@ The seed script creates demo accounts for local development. Do not run it again
 
 Use [`backend/.env.example`](backend/.env.example) as the backend template. For a separately hosted frontend, set `VITE_API_URL` at build time using [`frontend/.env.example`](frontend/.env.example).
 
-| Variable | Used by | Purpose |
-|---|---|---|
-| `PORT` | Backend | HTTP port (defaults to `5000`) |
-| `MONGO_URI` | Backend | MongoDB connection string |
-| `JWT_SECRET` | Backend | Private signing secret for authentication tokens |
-| `JWT_EXPIRES_IN` | Backend | Token lifetime (defaults to `7d`) |
-| `CLIENT_URL` | Backend | Allowed frontend origin(s), comma-separated |
-| `NODE_ENV` | Backend | Set to `production` for a deployment |
-| `VITE_API_URL` | Frontend | Base URL of a separately hosted API; leave empty for local proxying |
+| Variable         | Used by  | Purpose                                                             |
+| ---------------- | -------- | ------------------------------------------------------------------- |
+| `PORT`           | Backend  | HTTP port (defaults to `5000`)                                      |
+| `MONGO_URI`      | Backend  | MongoDB connection string                                           |
+| `JWT_SECRET`     | Backend  | Private signing secret for authentication tokens                    |
+| `JWT_EXPIRES_IN` | Backend  | Token lifetime (defaults to `7d`)                                   |
+| `CLIENT_URL`     | Backend  | Allowed frontend origin(s), comma-separated                         |
+| `NODE_ENV`       | Backend  | Set to `production` for a deployment                                |
+| `VITE_API_URL`   | Frontend | Base URL of a separately hosted API; leave empty for local proxying |
 
 Never put database credentials or private secrets in frontend variables: Vite embeds `VITE_*` values in client-side assets.
 
@@ -128,20 +128,20 @@ If frontend and backend are hosted separately, set `VITE_API_URL` to the deploye
 
 All endpoints are prefixed with `/api`.
 
-| Method | Endpoint | Access |
-|---|---|---|
-| `POST` | `/register`, `/login` | Public |
-| `GET` | `/me` | Authenticated |
-| `GET` | `/courses` and `/courses/:id` | Public; lesson content is access-controlled |
-| `POST` | `/courses` | Instructor or admin |
-| `PUT`, `DELETE` | `/courses/:id` | Course owner or admin |
-| `POST` | `/courses/:id/lessons` | Course owner or admin |
-| `DELETE` | `/courses/:id/lessons/:lessonId` | Course owner or admin |
-| `POST` | `/enroll` | Student |
-| `GET` | `/my-courses` | Student |
-| `PUT` | `/my-courses/:courseId/progress` | Student |
-| `GET` | `/admin/users`, `/admin/analytics` | Admin |
-| `PUT`, `DELETE` | `/admin/users/:id/role`, `/admin/users/:id` | Admin |
+| Method          | Endpoint                                    | Access                                      |
+| --------------- | ------------------------------------------- | ------------------------------------------- |
+| `POST`          | `/register`, `/login`                       | Public                                      |
+| `GET`           | `/me`                                       | Authenticated                               |
+| `GET`           | `/courses` and `/courses/:id`               | Public; lesson content is access-controlled |
+| `POST`          | `/courses`                                  | Instructor or admin                         |
+| `PUT`, `DELETE` | `/courses/:id`                              | Course owner or admin                       |
+| `POST`          | `/courses/:id/lessons`                      | Course owner or admin                       |
+| `DELETE`        | `/courses/:id/lessons/:lessonId`            | Course owner or admin                       |
+| `POST`          | `/enroll`                                   | Student                                     |
+| `GET`           | `/my-courses`                               | Student                                     |
+| `PUT`           | `/my-courses/:courseId/progress`            | Student                                     |
+| `GET`           | `/admin/users`, `/admin/analytics`          | Admin                                       |
+| `PUT`, `DELETE` | `/admin/users/:id/role`, `/admin/users/:id` | Admin                                       |
 
 ## Tests and checks
 

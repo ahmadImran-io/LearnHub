@@ -1,101 +1,163 @@
-# LearnHub – MERN Stack Learning Management System
+# LearnHub
 
-LearnHub is a full-stack Learning Management System. Students browse and enroll in courses and track progress, instructors create and manage courses and lessons, and admins manage users and view analytics.
+**A full-stack learning platform for discovering courses, learning at your own pace, and managing online classrooms.**
 
-## Technologies
-- **Frontend:** React 19, Vite, React Router, Axios, Tailwind CSS 4
-- **Backend:** Node.js, Express 5, Mongoose (MongoDB)
-- **Auth:** JWT (jsonwebtoken), bcrypt password hashing (bcryptjs), role-based middleware
-- **Config:** dotenv (`.env`)
+LearnHub is a MERN-stack Learning Management System (LMS). Learners can explore and enroll in courses, instructors can publish lessons, and admins can manage the platform.
 
-## Features
-| Role | Can do |
+![LearnHub home page](screenshots/1-home.png)
+
+## At a glance
+
+- **Learners:** search courses, enroll, view lessons, and track progress.
+- **Instructors:** create and manage courses and lessons.
+- **Admins:** manage users and courses and review platform analytics.
+- **Responsive UI:** browse on desktop or mobile.
+- **Authentication:** JWT-based sessions with role-based access control.
+
+## Visual tour
+
+| Explore courses | Instructor workspace |
 |---|---|
-| Visitor | Browse/search courses, view course dewtails, register, login |
-| Student | Enroll, view enrolled courses (`/my-courses`), mark lessons complete (progress %) |
-| Instructor | Create / edit / delete own courses, add / delete lessons |
-| Admin | Manage all users (change role, delete) and courses, view analytics |
+| ![Course search and listing](screenshots/course-search.png) | ![Instructor course dashboard](screenshots/instructor-dashboard.png) |
 
-## Project structure
-```
-learnhub/
-├── backend/
-│   ├── config/db.js            MongoDB connection
-│   ├── models/                 User, Course, Enrollment
-│   ├── controllers/            auth, course, enrollment, admin
-│   ├── routes/                 auth, course, enrollment, admin
-│   ├── middleware/             auth (protect/authorize), optionalAuth, error
-│   ├── tests/api.test.js       35 end-to-end API checks
-│   ├── app.js, server.js, seed.js
-│   └── .env.example
-└── frontend/
-    └── src/
-        ├── components/         Navbar, CourseCard, modals, Loader
-        ├── pages/              Home, CourseList, CourseDetail, Login, Register, dashboards
-        ├── routes/ProtectedRoute.jsx
-        ├── context/AuthContext.jsx
-        └── services/           axios instance + API services
+| Admin analytics | Mobile experience |
+|---|---|
+| ![Admin analytics dashboard](screenshots/admin-dashboard.png) | ![LearnHub on mobile](screenshots/25-mobile-home.png) |
+
+## Architecture
+
+```mermaid
+flowchart LR
+    Visitor[Visitor / Learner / Instructor / Admin] --> UI[React client]
+    UI -->|REST API + JWT| API[Express API]
+    API --> Auth[Authentication and role checks]
+    Auth --> Routes[API routes and controllers]
+    Routes --> Models[Mongoose models]
+    Models --> DB[(MongoDB)]
+    API -. production serves built client .-> UI
 ```
 
-## Installation
-Prerequisites: Node.js 18+, MongoDB running locally (or a MongoDB Atlas URI).
+## Technology
 
-```bash
-# 1. Backend
+| Layer | Technologies |
+|---|---|
+| Frontend | React, Vite, React Router, Axios, Tailwind CSS |
+| Backend | Node.js, Express |
+| Database | MongoDB, Mongoose |
+| Authentication | JSON Web Tokens, bcryptjs |
+
+## Run locally
+
+### Prerequisites
+
+- Node.js `20.19+` or `22.12+`, and npm (required by the current Vite version)
+- MongoDB running locally, or a MongoDB Atlas connection string
+
+### 1. Configure and start the backend
+
+In PowerShell:
+
+```powershell
 cd backend
-npm install
-cp .env.example .env        # then set JWT_SECRET and MONGO_URI
-npm run seed                # demo data (optional)
-npm run dev                 # http://localhost:5000
+npm ci
+Copy-Item .env.example .env
+```
 
-# 2. Frontend (new terminal)
+Edit `backend/.env` and set `MONGO_URI` and a private, randomly generated `JWT_SECRET`. Keep this file local; never commit it.
+
+```powershell
+npm run dev
+```
+
+The API starts at `http://localhost:5000`.
+
+### 2. Start the frontend
+
+Open a second terminal:
+
+```powershell
 cd frontend
-npm install
-npm run dev                 # http://localhost:5173  (proxies /api to :5000)
+npm ci
+npm run dev
 ```
 
-### Demo accounts (after `npm run seed`)
-| Role | Email | Password |
+Open `http://localhost:5173`. During development, Vite proxies `/api` requests to the backend.
+
+### Optional: load sample data
+
+With MongoDB configured, run this from the `backend` directory:
+
+```powershell
+npm run seed
+```
+
+The seed script creates demo accounts for local development. Do not run it against a production database or use its demo credentials on a public deployment.
+
+## Environment variables
+
+Use [`backend/.env.example`](backend/.env.example) as the backend template. For a separately hosted frontend, set `VITE_API_URL` at build time using [`frontend/.env.example`](frontend/.env.example).
+
+| Variable | Used by | Purpose |
 |---|---|---|
-| Admin | admin@learnhub.com | admin123 |
-| Instructor | sara@learnhub.com | instructor123 |
-| Student | ali@learnhub.com | student123 |
+| `PORT` | Backend | HTTP port (defaults to `5000`) |
+| `MONGO_URI` | Backend | MongoDB connection string |
+| `JWT_SECRET` | Backend | Private signing secret for authentication tokens |
+| `JWT_EXPIRES_IN` | Backend | Token lifetime (defaults to `7d`) |
+| `CLIENT_URL` | Backend | Allowed frontend origin(s), comma-separated |
+| `NODE_ENV` | Backend | Set to `production` for a deployment |
+| `VITE_API_URL` | Frontend | Base URL of a separately hosted API; leave empty for local proxying |
 
-### Environment variables (`backend/.env`)
-| Name | Description |
-|---|---|
-| PORT | API port (default 5000) |
-| MONGO_URI | MongoDB connection string |
-| JWT_SECRET | Secret used to sign tokens (never commit) |
-| JWT_EXPIRES_IN | Token lifetime, e.g. `7d` |
-| CLIENT_URL | Allowed CORS origin(s), comma separated |
-| NODE_ENV | `development` or `production` |
+Never put database credentials or private secrets in frontend variables: Vite embeds `VITE_*` values in client-side assets.
 
-## Production build / deployment
-```bash
-cd frontend && npm run build          # creates frontend/dist
-cd ../backend && NODE_ENV=production npm start
+## Production deployment
+
+The backend can serve the built frontend, allowing both to run as one Node.js service. From the repository root, use:
+
+```powershell
+npm --prefix frontend ci
+npm --prefix frontend run build
+npm --prefix backend ci
+npm --prefix backend start
 ```
-In production mode Express serves `frontend/dist`, so one service hosts the whole app (works on Render/Railway etc. with a MongoDB Atlas `MONGO_URI`). If the frontend is hosted separately, set `VITE_API_URL` in the frontend and `CLIENT_URL` in the backend.
 
-## API reference
+Configure the hosting service to build the frontend and start the backend with `npm --prefix backend start`. Set `NODE_ENV=production`, `MONGO_URI`, and a strong `JWT_SECRET` in the host's environment settings. Set `CLIENT_URL` to the frontend origin when needed. Use a managed MongoDB deployment for production; do not commit environment files.
+
+If frontend and backend are hosted separately, set `VITE_API_URL` to the deployed API URL when building the frontend and configure `CLIENT_URL` on the backend to allow the frontend's origin.
+
+## API overview
+
+All endpoints are prefixed with `/api`.
+
 | Method | Endpoint | Access |
 |---|---|---|
-| POST | /api/register | public (role limited to student/instructor) |
-| POST | /api/login | public |
-| GET | /api/me | any logged-in user |
-| GET | /api/courses?search=&category= | public |
-| GET | /api/courses/:id | public (lesson content only for enrolled/owner/admin) |
-| POST | /api/courses | instructor, admin |
-| PUT | /api/courses/:id | owner, admin |
-| DELETE | /api/courses/:id | owner, admin |
-| POST / DELETE | /api/courses/:id/lessons[/:lessonId] | owner, admin |
-| POST | /api/enroll | student |
-| GET | /api/my-courses | student |
-| PUT | /api/my-courses/:courseId/progress | student |
-| GET | /api/admin/users, /api/admin/analytics | admin |
-| PUT | /api/admin/users/:id/role | admin |
-| DELETE | /api/admin/users/:id | admin |
+| `POST` | `/register`, `/login` | Public |
+| `GET` | `/me` | Authenticated |
+| `GET` | `/courses` and `/courses/:id` | Public; lesson content is access-controlled |
+| `POST` | `/courses` | Instructor or admin |
+| `PUT`, `DELETE` | `/courses/:id` | Course owner or admin |
+| `POST` | `/courses/:id/lessons` | Course owner or admin |
+| `DELETE` | `/courses/:id/lessons/:lessonId` | Course owner or admin |
+| `POST` | `/enroll` | Student |
+| `GET` | `/my-courses` | Student |
+| `PUT` | `/my-courses/:courseId/progress` | Student |
+| `GET` | `/admin/users`, `/admin/analytics` | Admin |
+| `PUT`, `DELETE` | `/admin/users/:id/role`, `/admin/users/:id` | Admin |
 
-## Testing
-`cd backend && npm test` runs 35 automated end-to-end checks (register/login, validation, role restrictions, course CRUD, enrollment, progress, admin) against a separate `learnhub_test` database.
+## Tests and checks
+
+Run the backend API tests:
+
+```powershell
+cd backend
+npm test
+```
+
+The tests use a separate `learnhub_test` database. Ensure the test MongoDB instance is available before running them.
+
+Build and lint the frontend:
+
+```powershell
+cd frontend
+npm run build
+npm run lint
+```
